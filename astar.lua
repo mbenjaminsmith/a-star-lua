@@ -1,9 +1,15 @@
 
-local astar = {}
+---
+-- A clean, simple implementation of the A* pathfinding algorithm for Lua.
+--
+-- This implementation has no dependencies and has a simple interface. It
+-- takes a table of nodes, a start and end point and a "valid neighbor"
+-- function which makes it easy to adapt the module's behavior, especially
+-- in circumstances where valid paths would frequently change.
+--
+-- @module astar
 
-function astar.distance ( x1, y1, x2, y2 )
-	return math.sqrt ( ( (x2-x1)^2 ) + ( (y2-y1)^2 ) )
-end
+local astar = {}
 
 local function dist_between ( nodeA, nodeB )
 
@@ -72,6 +78,28 @@ local function unwind_path ( flat_path, map, current_node )
 	end
 end
 
+---
+-- Calculate the distance between two 2D points.
+--
+-- @tparam number x1 First point's coordinate in the X axis.
+-- @tparam number y1 First point's coordinate in the Y axis.
+-- @tparam number x2 Second point's coordinate in the X axis.
+-- @tparam number y2 Second point's coordinate in the Y axis.
+-- @treturn The distance between the points.
+function astar.distance ( x1, y1, x2, y2 )
+	return math.sqrt ( ( (x2-x1)^2 ) + ( (y2-y1)^2 ) )
+end
+
+---
+-- Calculate a path between two nodes.
+--
+-- @tparam table start Start node.
+-- @tparam table goal Goal node.
+-- @tparam table nodes Array of nodes.
+-- @tparam ?function valid_node Function called with two arguments: the
+--  "current" node and the candidate node, and should return a boolean
+--  indicating if we can "move" to that node.
+-- @treturn A lua table of ordered nodes from start to end.
 function astar.path ( start, goal, nodes, valid_node )
 
 	local closedset = {}
